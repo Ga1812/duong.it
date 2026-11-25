@@ -1,0 +1,1500 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101c29">
+  <meta name="description" content="Use eleven true clues to recover the modules, beacons and digits on NOVA's five-node core ring. A shorter offline Junior logic puzzle.">
+  <title>NOVA · The Core Recovery Ring</title>
+  <style>
+  
+    :root {
+      color-scheme: dark;
+      --paper: #090e17;
+      --surface: #101d2c;
+      --surface-raised: #16283c;
+      --ink: #e6f3fa;
+      --muted: #8aa4ba;
+      --line: #223c52;
+      --soft: #1a2f44;
+      --teal: #00f2fe;
+      --teal-dark: #4facfe;
+      --sage: #00e5a3;
+      --blue: #38bdf8;
+      --error: #ff7675;
+      --focus: #00f2fe;
+      --cyan-glow: rgba(0, 242, 254, 0.35);
+      --purple-glow: rgba(168, 85, 247, 0.3);
+      --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: #070d16;
+      background-image: 
+        radial-gradient(circle at 18% 12%, rgba(0, 242, 254, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 82% 80%, rgba(168, 85, 247, 0.09) 0%, transparent 45%),
+        linear-gradient(rgba(0, 242, 254, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 254, 0.035) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+      color: var(--ink);
+      font: 13px/1.45 var(--sans);
+      position: relative;
+      min-height: 100vh;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #00f2fe, #4facfe 50%, #a855f7 100%);
+      box-shadow: 0 0 14px #00f2fe;
+      z-index: 1000;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; }
+    button, a, label { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+    button:focus:not(:focus-visible) { outline: none; }
+    [hidden] { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .icon { width: 16px; height: 16px; display: inline-block; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .page { position: relative; z-index: 1; max-width: 1800px; min-height: 100svh; margin: 0 auto; padding: 0 24px 9px; display: flex; flex-direction: column; }
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 48px; border-bottom: 1px solid #3d586559; }
+    .brand { display: flex; align-items: center; gap: 9px; }
+    .brand-mark { width: 32px; height: 32px; border: 1.5px solid #00f2fe; border-radius: 8px; display: grid; place-items: center; background: linear-gradient(135deg, #0e3b48, #071f28); color: #00f2fe; box-shadow: 0 0 12px rgba(0, 242, 254, 0.4), inset 0 0 8px rgba(0, 242, 254, 0.25); }
+    .brand-name { font-size: 17px; font-weight: 800; letter-spacing: .2em; color: #f0faff; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
+    .brand-mark .icon { width: 21px; height: 21px; }
+    .brand-name { font-size: 17px; font-weight: 750; letter-spacing: .16em; }
+    .brand-sub { font: 9px var(--mono); letter-spacing: .12em; color: var(--muted); margin-top: 1px; }
+    .division { display: flex; align-items: center; gap: 14px; color: #b4c7d1; font: 10px var(--mono); }
+    .division span + span { padding-left: 14px; border-left: 1px solid #405868; }
+    .division .live-dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; background: var(--sage); margin-right: 6px; box-shadow: 0 0 7px #8ec3ac38; }
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 20px;
+      margin: 10px 0 14px;
+      border: 1.5px solid rgba(0, 242, 254, 0.35);
+      border-radius: 12px;
+      background: linear-gradient(125deg, rgba(8, 28, 44, 0.88), rgba(6, 17, 28, 0.95) 55%, rgba(16, 24, 48, 0.9) 100%);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), inset 0 1px rgba(0, 242, 254, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -30px;
+      left: -30px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: "CORE // RECOVERY PROTOCOL";
+      position: absolute;
+      top: 6px;
+      right: 18px;
+      font: 700 8.5px var(--mono);
+      letter-spacing: .15em;
+      color: #00f2fe;
+      opacity: 0.85;
+      text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+    }
+    h1 {
+      margin: 0 0 4px;
+      font-size: clamp(22px, 2vw, 28px);
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 0 14px rgba(0, 242, 254, 0.4);
+    }
+    .hero p {
+      margin: 0;
+      color: #a8cfdf;
+      max-width: 1100px;
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .hero-art {
+      width: 165px;
+      height: 50px;
+      flex: 0 0 auto;
+      filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.45));
+    }
+    .layout { display: grid; grid-template-columns: minmax(300px, 30%) minmax(0, 1fr); gap: 14px; align-items: stretch; flex: 1; }
+    .panel {
+      position: relative;
+      min-width: 0;
+      border: 1px solid rgba(0, 242, 254, 0.22);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(16, 28, 42, 0.92), rgba(11, 20, 31, 0.96) 65%);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px rgba(0, 242, 254, 0.15);
+      backdrop-filter: blur(8px);
+    }
+    .panel:hover {
+      border-color: rgba(0, 242, 254, 0.38);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 16px rgba(0, 242, 254, 0.12);
+      transition: all 0.25s ease;
+    }
+    .panel::before, .panel::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      width: 18px;
+      height: 8px;
+      border-color: #00f2fe;
+      border-style: solid;
+      box-shadow: 0 0 6px #00f2fe;
+    }
+    .panel::before { top: -1px; left: 14px; border-width: 2px 0 0 2px; }
+    .panel::after { bottom: -1px; right: 14px; border-width: 0 2px 2px 0; }
+    .clue-panel { padding: 14px; display: flex; flex-direction: column; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; gap: 9px; }
+    h2 { margin: 0; font-size: 17px; line-height: 1.25; font-weight: 650; letter-spacing: -.015em; }
+    h3 { margin: 0; font-size: 12px; font-weight: 600; }
+    .panel-kicker { color: #91b4c0; font: 9px var(--mono); letter-spacing: .11em; text-transform: uppercase; margin-bottom: 5px; }
+    .note-count { color: var(--muted); font: 10px var(--mono); white-space: nowrap; }
+    .rule { margin: 10px 0 7px; padding: 9px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: #b9c9d3; font-size: 12px; line-height: 1.45; }
+    .rule p { margin: 0; }
+    .rule p + p { margin-top: 5px; }
+    .rule strong { color: #e5eee9; font-weight: 600; }
+    .note-hint { margin: 0 0 4px; color: #91a8b7; font-size: 10px; }
+    .clues { padding: 0; list-style: none; margin: 0; display: flex; flex-direction: column; flex: 1; }
+    .clues li { display: flex; align-items: center; flex: 1; }
+    .clues li + li { border-top: 1px solid #344c5b66; }
+    .clue { display: grid; grid-template-columns: 14px 17px 1fr; align-items: start; gap: 6px; padding: 5px 0; cursor: pointer; font-size: 13px; line-height: 1.4; width: 100%; }
+    .clue input { width: 13px; height: 13px; accent-color: #9ec9b3; margin: 3px 0 0; cursor: pointer; }
+    .clue-number { font: 10px/1.8 var(--mono); color: #91aebd; }
+    .clue.is-marked .clue-text { color: #90a9a9; }
+    .clue.is-marked .clue-number { color: var(--teal); }
+    .clue-text strong { color: #c5e2d9; font: 600 .94em var(--mono); }
+    .workspace { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .work-panel { padding: 12px; display: flex; flex-direction: column; flex: 1; }
+    .work-heading { display: flex; align-items: center; gap: 9px; }
+    .step-number { display: inline-grid; place-items: center; width: 23px; height: 23px; background: #294552; border: 1px solid #50717c; border-radius: 6px; color: #bddbd9; font: 11px var(--mono); flex: 0 0 auto; }
+    .placement-count { color: var(--teal); border: 1px solid #486a68; background: #213c3c; border-radius: 6px; padding: 4px 7px; font: 10px var(--mono); white-space: nowrap; }
+    .subtext { color: var(--muted); font-size: 11px; margin: 5px 0 0; }
+    .selection-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-height: 24px; margin: 3px 0 4px; color: #9db6bf; font-size: 11px; }
+    .selection-bar strong { color: #d2e8dc; font: 600 11px var(--mono); }
+    .text-button { display: inline-flex; align-items: center; border: 0; background: #253e4b; color: #bad6d5; border-radius: 4px; padding: 2px 6px; font-size: 10px; min-height: 22px; }
+    .text-button:hover { background: #35505c; }
+    .table-area { min-width: 0; width: 100%; flex: 1; display: flex; flex-direction: column; }
+    .records { border-collapse: separate; border-spacing: 0; table-layout: fixed; width: 100%; height: auto; flex: 1; }
+    .records th, .records td { vertical-align: middle; }
+    .records thead th { border-top: 1px solid #486271; border-bottom: 1px solid #486271; background: #203544; text-align: center; padding: 5px 6px; border-left: 1px solid #344d5d; }
+    .records thead th:first-child { width: 176px; text-align: left; border-left: 0; background: #1b2f3d; padding-left: 8px; }
+    .library-title { font-size: 12px; font-weight: 600; color: #cbdde5; }
+    .library-sub { margin-top: 4px; color: #98b5c1; font: 9px var(--mono); letter-spacing: .06em; }
+    .bay-head { display: grid; grid-template-columns: 40px auto; align-items: center; justify-content: center; column-gap: 8px; }
+    .bay-dock { width: 40px; height: 36px; color: #8fb5c4; grid-row: 1 / 3; }
+    .bay-title { text-align: left; font: 600 13px var(--mono); color: #dcecf2; letter-spacing: .04em; align-self: end; }
+    .bay-position { text-align: left; font: 8px var(--mono); letter-spacing: .08em; color: #9bb7bf; align-self: start; margin-top: 2px; white-space: nowrap; }
+    .records tbody th { padding: 4px 8px; text-align: left; background: #172b39; border-bottom: 1px solid #344d5d; }
+    .records tbody td { padding: 4px 8px; background: linear-gradient(180deg, #1b303e, #192c3a); border-left: 1px solid #344d5d; border-bottom: 1px solid #344d5d; }
+    .records tbody td:nth-child(odd) { background: linear-gradient(180deg, #1e3343, #1c2f3e); }
+    .records tbody tr:last-child th, .records tbody tr:last-child td { border-bottom-color: #486271; }
+    .tray { min-width: 0; }
+    .tray-head { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin-bottom: 4px; }
+    .tray-head h3 { color: #c4d6df; font-size: 11px; font-weight: 500; line-height: 1.1; }
+    .tray-count { font: 9px/1.1 var(--mono); color: #95adba; white-space: nowrap; }
+    .tray-items { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; min-height: 50px; align-content: start; }
+    .tray-empty { margin: 0; color: #a0b8bb; font: 10px var(--mono); grid-column: 1 / -1; align-self: center; text-align: center; padding-top: 13px; }
+    .tray.is-return-target { outline: 2px dashed #add1bd; outline-offset: 2px; border-radius: 4px; }
+    .token { display: inline-flex; justify-content: center; align-items: center; gap: 4px; min-width: 0; min-height: 23px; padding: 3px 6px; background: #1e3342; color: #e0f2f7; border: 1px solid #3d647a; border-radius: 5px; font: 700 11px/1.15 var(--mono); user-select: none; -webkit-user-select: none; cursor: grab; white-space: nowrap; box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0,0,0,0.3); transition: all 0.15s ease; }
+    .token[data-category="module"] { background: linear-gradient(135deg, #1b354f, #14283c); border-color: #3b749d; color: #bae3ff; }
+    .token[data-category="digit"] { background: linear-gradient(135deg, #373323, #29261a); border-color: #92834d; color: #ffebbd; font-size: 13px; }
+    .token:hover { background: #28475c; border-color: #00f2fe; box-shadow: 0 0 10px rgba(0, 242, 254, 0.4); transform: translateY(-1px); }
+    .token.is-selected { outline: 2px solid #bad8c4; outline-offset: 1px; }
+    .token.is-dragging { opacity: .45; cursor: grabbing; }
+    .swatch { display: inline-block; width: 7px; height: 7px; border: 1px solid #cad7e166; border-radius: 50%; flex: 0 0 auto; }
+    .swatch.amber { background: #d3b276; }
+    .swatch.cyan { background: #85bbc8; }
+    .swatch.violet { background: #b1a0d0; }
+    .swatch.white { background: #e8edf0; }
+    .slot { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; min-height: 39px; padding: 5px 4px; border: 1.5px dashed rgba(56, 189, 248, 0.35); border-radius: 6px; background: rgba(13, 27, 40, 0.7); color: #8eb3c7; font: 11px var(--mono); user-select: none; transition: all 0.2s ease; }
+    .slot:hover { background: rgba(22, 45, 66, 0.85); border-color: #00f2fe; box-shadow: inset 0 0 12px rgba(0, 242, 254, 0.2); }
+    .slot.is-filled { border: 1.5px solid #00e5a3; background: linear-gradient(130deg, #18423f, #102d2c); color: #e0fff4; font-weight: 700; cursor: pointer; box-shadow: 0 0 10px rgba(0, 229, 163, 0.25), inset 0 1px rgba(255,255,255,0.1); }
+    .slot.is-filled[data-category="module"] { background: linear-gradient(130deg, #334963, #2a3f55); border-color: #6c87a8; color: #d0e0f5; }
+    .slot.is-filled[data-category="digit"] { background: linear-gradient(130deg, #46473e, #3a3c35); border-color: #8b815f; color: #ecddba; font-size: 18px; }
+    .slot.is-selected { outline: 2px solid #c1ddc9; outline-offset: 2px; }
+    .slot.is-target { background: #34564e; border-color: #c1ddc9; box-shadow: inset 0 0 0 1px #c1ddc9; }
+    .slot.is-dragging { opacity: .45; }
+    .board-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; min-height: 31px; }
+    .board-actions { display: flex; gap: 5px; flex: 0 0 auto; }
+    .utility { display: inline-flex; align-items: center; justify-content: center; gap: 5px; border: 1px solid #4a6573; border-radius: 5px; padding: 5px 8px; min-height: 28px; background: #223846; color: #c6d7df; font-size: 11px; white-space: nowrap; }
+    .utility .icon { width: 13px; height: 13px; }
+    .utility:hover:not(:disabled) { background: #324c58; }
+    .utility:disabled { opacity: .45; }
+    .board-message { color: #aacbbd; font-size: 10px; line-height: 1.35; margin: 0; min-width: 0; flex: 1; }
+    .board-message.is-error { color: var(--error); }
+    .save-note { color: #a2b7c2; font-size: 9px; max-width: 125px; flex: 0 0 auto; text-align: right; }
+    .save-note::before { content: ""; display: inline-block; vertical-align: 1px; width: 4px; height: 4px; background: #98c7a5; border-radius: 50%; margin-right: 4px; }
+    .unlock-panel { display: grid; grid-template-columns: minmax(0,1fr) minmax(270px,.9fr); align-items: center; gap: 16px; padding: 11px 13px; background: linear-gradient(110deg, #233b42, #1b2e3d 65%); }
+    .unlock-panel.is-solved { border-color: #7aab92; background: linear-gradient(110deg, #2b4944, #223a3e 65%); }
+    .unlock-title { display: flex; align-items: center; gap: 7px; }
+    .unlock-title h2 { font-size: 15px; }
+    .lock-icon { display: grid; place-items: center; width: 22px; height: 22px; color: #b9dac6; background: #304d48; border: 1px solid #698879; border-radius: 5px; }
+    .module-order { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin: 6px 0 4px; }
+    .module-order span { font: 600 10px var(--mono); color: #d0def0; background: #304761; border: 1px solid #526d86; padding: 3px 5px; border-radius: 4px; }
+    .module-order .icon { width: 12px; height: 12px; color: #a1babf; }
+    .extract-note { margin: 0; color: #b4c7cc; font-size: 10px; line-height: 1.4; }
+    .combination-form { margin: 0; border-left: 1px solid #48616b; padding-left: 16px; }
+    .code-label { display: block; color: #c5d8df; font-size: 10px; margin-bottom: 4px; }
+    .code-controls { display: flex; align-items: stretch; gap: 7px; }
+    .combination { width: 126px; flex: 1; min-width: 100px; border: 1.5px solid #38bdf8; border-radius: 6px; background: #081520; color: #00f2fe; padding: 4px 5px 4px 12px; font: 23px/1.2 var(--mono); font-weight: 700; letter-spacing: .35em; text-align: center; box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), 0 0 8px rgba(56, 189, 248, 0.2); }
+    .combination:focus { border-color: #00f2fe; box-shadow: 0 0 14px rgba(0, 242, 254, 0.4), inset 0 2px 8px rgba(0,0,0,0.6); outline: none; }
+    .combination::placeholder { color: #a3b4ad; opacity: 1; }
+    .combination[aria-invalid="true"] { border-color: var(--error); }
+    .combination:disabled { color: #c7e2cc; opacity: 1; -webkit-text-fill-color: #c7e2cc; }
+    .primary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; min-height: 38px; border: 1.5px solid #00e5a3; border-radius: 6px; background: linear-gradient(135deg, #00e5a3, #00b884); color: #05261d; font-size: 12px; font-weight: 750; letter-spacing: .03em; white-space: nowrap; box-shadow: 0 0 14px rgba(0, 229, 163, 0.35); transition: all 0.2s; }
+    .primary:hover:not(:disabled) { background: linear-gradient(135deg, #33f0b8, #00d69a); box-shadow: 0 0 20px rgba(0, 229, 163, 0.6); transform: translateY(-1px); }
+    .primary:disabled { border-color: #567466; color: #bad0c5; background: #3c584e; box-shadow: none; }
+    .primary.is-unlocked { color: #153b2e; border-color: #b6dbbf; background: #b5d7bb; }
+    .answer-message { margin: 5px 0 0; min-height: 27px; color: #b6c8cf; font-size: 10px; line-height: 1.35; }
+    .answer-message.is-error { color: var(--error); }
+    .answer-message.is-success { color: #cae7d0; }
+    .page-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 7px; min-height: 12px; color: #97afbb; font: 9px var(--mono); letter-spacing: .06em; }
+    .footer-circuit { display: flex; align-items: center; gap: 7px; }
+    .footer-circuit::before { content: ""; display: inline-block; width: 44px; height: 5px; border: 1px solid #537581; border-width: 1px 1px 0 0; transform: skewX(-35deg); }
+    #compact-library { display: none; }
+    .compact-row-label { color: #c2d6df; font-size: 11px; }
+    .skip-link { position: absolute; left: 15px; top: -80px; z-index: 10; border: 1px solid var(--focus); border-radius: 5px; background: #1c3440; color: #e8f1e7; padding: 10px 14px; }
+    .skip-link:focus { top: 10px; }
+    dialog { max-width: 380px; width: calc(100% - 32px); border: 1px solid #6c8b92; border-radius: 12px; padding: 23px; background: #1c3140; color: var(--ink); box-shadow: 0 20px 80px #00000066; }
+    dialog::backdrop { background: #070e17aa; }
+    dialog h2 { font-size: 21px; }
+    dialog p { color: #bdced6; font-size: 13px; margin: 10px 0 20px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    @media (min-width: 1400px) and (min-height: 850px) {
+      .page { padding-left: 30px; padding-right: 30px; }
+      .masthead { min-height: 58px; }
+      .hero { padding: 16px 0 16px; }
+      .hero p { font-size: 13px; }
+      .clue-panel { padding: 19px; }
+      .clue { font-size: 14px; padding: 7px 0; }
+      .rule { font-size: 13px; line-height: 1.5; }
+      .work-panel { padding: 17px; }
+      .records thead th:first-child { width: 205px; }
+      .bay-head { grid-template-columns: 48px auto; }
+      .bay-dock { width: 48px; height: 47px; }
+      .token { min-height: 28px; font-size: 12px; }
+      .tray-items { min-height: 60px; }
+      .tray-head h3 { font-size: 12px; }
+      .slot { min-height: 49px; font-size: 13px; }
+      .slot.is-filled[data-category="digit"] { font-size: 22px; }
+      .records tbody th, .records tbody td { padding-top: 8px; padding-bottom: 8px; }
+      .unlock-panel { padding: 15px 18px; }
+      .unlock-title h2 { font-size: 17px; }
+      .module-order span { font-size: 11px; }
+      .extract-note, .code-label, .answer-message { font-size: 11px; }
+      .combination { font-size: 26px; }
+      .primary { font-size: 13px; }
+    }
+    @media (max-width: 1120px) {
+      .page { padding-left: 16px; padding-right: 16px; }
+      .layout { grid-template-columns: minmax(292px,31%) minmax(0,1fr); gap: 11px; }
+      .records thead th:first-child { width: 146px; }
+      .records tbody th { padding-left: 4px; padding-right: 5px; }
+      .records tbody td { padding-left: 5px; padding-right: 5px; }
+      .bay-head { grid-template-columns: 32px auto; column-gap: 5px; }
+      .bay-dock { grid-row: 1 / 3; width: 32px; height: 31px; }
+      .bay-title, .bay-position { text-align: left; }
+      .bay-title { font-size: 11px; }
+      .bay-position { font-size: 7px; margin-top: 1px; }
+      .token { font-size: 10px; }
+      .token .swatch { width: 6px; height: 6px; }
+      .tray-items { gap: 3px; }
+      .unlock-panel { grid-template-columns: minmax(0,1fr) minmax(240px,1fr); gap: 10px; }
+      .combination-form { padding-left: 10px; }
+      .module-order { gap: 3px; }
+      .module-order span { padding-left: 3px; padding-right: 3px; font-size: 9px; }
+      .module-order .icon { width: 9px; }
+      .hero-art { width: 120px; }
+      .save-note { display: none; }
+      .board-message { font-size: 10px; }
+      .clue { font-size: 12px; padding-top: 4px; padding-bottom: 4px; }
+      .rule { font-size: 11px; }
+    }
+    @media (min-width: 900px) and (max-height: 760px) {
+      .masthead { min-height: 42px; }
+      .hero { padding-top: 8px; padding-bottom: 7px; }
+      h1 { font-size: 24px; }
+      .hero-art { height: 42px; }
+      .clue-panel { padding: 11px; }
+      .clue { font-size: 12px; padding-top: 3px; padding-bottom: 3px; line-height: 1.4; }
+      .rule { font-size: 11px; margin-top: 8px; padding-top: 7px; padding-bottom: 7px; }
+      .work-panel { padding: 10px; }
+      .token { min-height: 22px; padding-top: 2px; padding-bottom: 2px; }
+      .tray-items { min-height: 47px; gap: 3px; }
+      .tray-head { margin-bottom: 3px; }
+      .records thead th { padding-top: 4px; padding-bottom: 4px; }
+      .records tbody th, .records tbody td { padding-top: 2px; padding-bottom: 2px; }
+      .slot { min-height: 35px; }
+      .board-footer { margin-top: 6px; }
+      .unlock-panel { padding: 9px 11px; }
+      .page-footer { margin-top: 6px; }
+    }
+    @media (max-width: 899px) {
+      .page { padding: 0 14px 12px; }
+      .layout { grid-template-columns: 1fr; }
+      .hero { padding: 13px 0; }
+      .hero-art { display: none; }
+      .clue-panel { padding: 13px; }
+      .clues { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto; column-gap: 20px; }
+      .clues li + li { border-top: 0; }
+      .clues li { border-bottom: 1px solid #344c5b66; }
+      .clue { font-size: 13px; padding: 7px 0; }
+      .rule { margin-top: 8px; padding-top: 7px; padding-bottom: 7px; }
+      .records thead th:first-child { width: 156px; }
+      .records tbody th, .records tbody td { padding-top: 7px; padding-bottom: 7px; }
+      .slot { min-height: 42px; }
+      .bay-head { grid-template-columns: 36px auto; }
+      .bay-dock { grid-row: 1 / 3; width: 36px; height: 34px; }
+      .bay-title, .bay-position { text-align: left; }
+      .token { min-height: 28px; font-size: 11px; }
+      .tray-items { min-height: 60px; }
+      .unlock-panel { grid-template-columns: minmax(0,1fr) minmax(240px,1fr); }
+      .work-panel { flex: 0 0 auto; }
+    }
+    @media (max-width: 640px) {
+      .page { padding-left: 12px; padding-right: 12px; }
+      .division { flex-direction: column; align-items: flex-end; gap: 3px; font-size: 9px; }
+      .division span + span { border-left: 0; padding-left: 0; }
+      .hero p { font-size: 12px; }
+      .clues { display: block; }
+      .clue { min-height: 43px; align-items: center; }
+      .clue input { width: 15px; height: 15px; margin-top: 0; }
+      .clue-number { font-size: 10px; }
+      .work-panel { padding: 10px; }
+      .work-heading { gap: 6px; }
+      .work-heading h2 { font-size: 15px; }
+      .placement-count { font-size: 9px; padding: 4px; }
+      .selection-bar { min-height: 32px; font-size: 11px; margin: 4px 0; }
+      .text-button { min-height: 36px; padding: 6px; }
+      .table-area { display: flex; flex-direction: column; }
+      #compact-library { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 10px; }
+      #compact-library .tray { border: 1px solid #435f6f; background: #1c3342; padding: 7px; border-radius: 6px; }
+      .tray-head h3 { font-size: 11px; }
+      .tray-count { font-size: 8px; }
+      .tray-items { min-height: 91px; gap: 3px; }
+      .token { min-height: 44px; padding: 5px 3px; font-size: 11px; }
+      .records thead th:first-child { width: 52px; padding: 4px; }
+      .library-title { font-size: 10px; }
+      .library-sub { display: none; }
+      .bay-head { grid-template-columns: 1fr; gap: 0; }
+      .bay-dock { grid-row: auto; width: 31px; height: 25px; justify-self: center; }
+      .bay-title { font-size: 11px; text-align: center; }
+      .bay-position { display: none; }
+      .records thead th { padding: 4px 2px; }
+      .records tbody th { padding-left: 3px; padding-right: 3px; }
+      .records tbody td { padding: 5px 2px; }
+      .compact-row-label { font-size: 9px; }
+      .slot { min-height: 44px; padding: 4px 1px; font-size: 10px; }
+      .slot .swatch { width: 6px; height: 6px; }
+      .board-footer { flex-wrap: wrap; gap: 7px; }
+      .board-message { flex-basis: 100%; min-height: 25px; font-size: 11px; }
+      .utility { min-height: 38px; padding: 7px 10px; }
+      .unlock-panel { display: block; padding: 13px; }
+      .unlock-title h2 { font-size: 16px; }
+      .module-order { margin-top: 10px; gap: 5px; }
+      .module-order span { font-size: 10px; padding: 4px 5px; }
+      .module-order .icon { width: 12px; }
+      .extract-note { font-size: 11px; }
+      .combination-form { margin-top: 12px; padding-top: 12px; padding-left: 0; border-top: 1px solid #4d6873; border-left: 0; }
+      .code-label { font-size: 11px; }
+      .combination { min-width: 95px; font-size: 24px; min-height: 45px; }
+      .primary { min-height: 45px; font-size: 12px; padding-left: 9px; padding-right: 9px; }
+      .answer-message { min-height: 30px; font-size: 11px; }
+      .page-footer { font-size: 8px; gap: 7px; }
+      .footer-circuit::before { display: none; }
+    }
+    @media (max-width: 400px) {
+      .token .swatch, .slot .swatch { display: none; }
+      .token { font-size: 10px; }
+      .slot { font-size: 9px; gap: 2px; }
+      .compact-row-label { font-size: 8px; }
+      .module-order { gap: 3px; }
+      .module-order span { font-size: 9px; padding-left: 4px; padding-right: 4px; }
+      .module-order .icon { width: 9px; }
+      .work-heading h2 { font-size: 13px; }
+      .step-number { width: 21px; height: 21px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    @media print {
+      :root { color-scheme: light; --ink: #18352d; --muted: #4f665f; --line: #a5b8ae; }
+      body, .page, .panel, .records thead th, .records tbody th, .records tbody td { background: #fff !important; color: #18352d; box-shadow: none; }
+      .page { min-height: 0; max-width: none; }
+      .hero-art, .division, .page-footer, .selection-bar, .board-footer, .combination-form, .clue input, .tray-items, .tray-count, #compact-library { display: none !important; }
+      .layout { display: block; }
+      .workspace { break-before: page; margin-top: 15px; }
+      .clues { display: block; }
+      .clue { grid-template-columns: 22px 1fr; color: #18352d; }
+      .clue-text strong, .clue-text, .rule, .rule strong, .note-hint, .tray-head h3, .bay-title, .bay-position, .library-title, .extract-note, .unlock-title h2 { color: #18352d !important; }
+      .slot { background: #fff !important; color: #18352d !important; border-color: #8aa094; }
+      .unlock-panel { display: block; margin-top: 12px; }
+      .panel::before, .panel::after { display: none; }
+    }
+  
+  :root { --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+.page { max-width: 1920px; padding-bottom: 4px; }
+.masthead { min-height: 44px; }
+.hero { padding-top: 6px; padding-bottom: 6px; }
+.hero p { max-width: 1250px; }
+.layout { grid-template-columns: minmax(320px,32%) minmax(185px,17%) minmax(0,1fr); gap: 12px; }
+.clue-panel { padding: 12px; }
+.clue { font-size: 12px; padding: 3px 0; }
+.clue-text strong { font-weight: 500; }
+.rule { margin-top: 8px; font-size: 11px; padding: 7px 0; }
+.ring-panel { padding: 12px; display: flex; flex-direction: column; }
+.ring-panel h2 { font-size: 16px; }
+.ring-sequence { font: 10px var(--mono); color: #c6dddf; letter-spacing: .02em; margin: 6px 0 0; text-align: center; }
+.ring-diagram { display: block; width: 100%; height: clamp(130px,17vh,175px); margin: 3px auto 0; flex: 0 0 auto; }
+.ring-edge { fill: none; stroke: #8eafbc; stroke-width: 1.5; }
+.ring-back { fill: none; stroke: #506e7d; stroke-width: 1; stroke-dasharray: 2 5; }
+.ring-node circle { fill: #2a4655; stroke: #89b1b8; stroke-width: 1.5; }
+.ring-node text { font: 600 16px var(--mono); fill: #e2efe9; text-anchor: middle; dominant-baseline: central; }
+.ring-node.is-active circle { fill: #44685e; stroke: #d4e8ce; stroke-width: 2.5; }
+.ring-note { color: #b1c7cf; font-size: 10px; line-height: 1.4; margin: 1px 0 4px; }
+.work-panel { padding: 12px; }
+.work-heading h2 { font-size: 16px; }
+.bank { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin-top: 8px; }
+.tray { border: 1px solid #415a69; background: #1a303f; border-radius: 6px; padding: 6px; }
+.tray-items { min-height: 77px; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px; }
+.tray-head { gap: 4px; margin-bottom: 5px; }
+.tray-head h3 { font-size: 11px; }
+.tray-count { font-size: 8px; }
+.token { min-height: 23px; font-size: 10px; font-weight: 500; padding: 3px; gap: 3px; }
+.token[data-category="digit"] { font-size: 13px; }
+.tray-empty { padding-top: 23px; }
+.swatch.lime { background: #b3c58a; }
+.selection-bar { min-height: 25px; margin: 4px 0 5px; }
+.records thead th:first-child { width: 51px; padding-left: 4px; }
+.records thead th { padding: 7px 4px; }
+.node-heading { display: inline-flex; align-items: center; justify-content: center; gap: 5px; font: 600 12px var(--mono); color: #daebf0; }
+.node-heading .icon { height: 16px; width: 16px; color: #9abec4; }
+.records thead th.is-active { background: #36564f; }
+.records tbody th { padding: 5px 3px; font: 10px var(--sans); font-weight: 500; color: #bacfd8; }
+.records tbody td { padding: 6px 4px; }
+.slot { min-height: 38px; font-size: 10px; font-weight: 500; padding: 5px 2px; gap: 4px; }
+.slot.is-filled { font-weight: 500; }
+.slot.is-filled[data-category="digit"] { font-size: 17px; }
+.table-area { flex: 1; }
+.records { flex: 1; }
+.save-note { display: none; }
+.board-message { font-size: 10px; }
+.unlock-panel { grid-template-columns: minmax(0,1fr) minmax(230px,1fr); gap: 10px; padding: 10px 11px; }
+.unlock-title h2 { font-size: 14px; }
+.combination-form { padding-left: 10px; }
+.code-controls { gap: 6px; }
+.combination { min-width: 93px; padding-left: 9px; font-size: 22px; }
+.primary { padding: 8px; min-height: 36px; font-size: 11px; }
+.answer-message { min-height: 29px; }
+.module-order { gap: 4px; }
+.module-order span { font-size: 9px; padding: 3px 4px; }
+.module-order .icon { width: 10px; }
+.extract-note { font-size: 10px; }
+@media (min-width:1400px) and (min-height:850px) {
+  .layout { grid-template-columns: minmax(330px,32%) minmax(210px,17%) minmax(0,1fr); gap: 14px; }
+  .clue-panel, .ring-panel { padding: 16px; }
+  .clue { font-size: 13px; padding: 5px 0; }
+  .rule { font-size: 12px; }
+  .work-panel { padding: 15px; }
+  .ring-panel h2 { font-size: 17px; }
+  .ring-note { font-size: 11px; }
+  .token { font-size: 11px; min-height: 28px; }
+  .tray-items { min-height: 92px; }
+  .tray-head h3 { font-size: 12px; }
+  .slot { min-height: 48px; font-size: 11px; }
+  .slot.is-filled[data-category="digit"] { font-size: 21px; }
+  .records thead th:first-child { width: 55px; }
+  .unlock-panel { padding: 13px; }
+  .unlock-title h2 { font-size: 15px; }
+  .answer-message, .extract-note, .code-label { font-size: 11px; }
+}
+@media (min-width:1000px) and (max-width:1120px) {
+  .layout { grid-template-columns: 320px 180px minmax(0,1fr); gap: 9px; }
+  .clue-panel, .ring-panel { padding: 10px; }
+  .clue { padding-top: 2px; padding-bottom: 2px; font-size: 11.5px; }
+  .rule { font-size: 10.5px; }
+  .work-panel { padding: 10px; }
+  .bank { gap: 4px; }
+  .tray { padding: 5px; }
+  .tray-head h3 { font-size: 10px; }
+  .tray-count { font-size: 8px; }
+  .token { font-size: 9px; padding-left: 2px; padding-right: 2px; }
+  .token .swatch { display: none; }
+  .tray-items { gap: 3px; }
+  .node-heading { font-size: 10px; gap: 3px; }
+  .node-heading .icon { width: 13px; }
+  .records thead th:first-child { width: 41px; }
+  .records tbody th { font-size: 9px; }
+  .records tbody td { padding-left: 3px; padding-right: 3px; }
+  .slot { font-size: 9px; gap: 3px; }
+  .slot .swatch { width: 5px; height: 5px; }
+  .unlock-panel { grid-template-columns: minmax(0,1fr) minmax(215px,1fr); padding: 9px; }
+  .unlock-title h2 { font-size: 13px; }
+  .combination { min-width: 87px; font-size: 20px; }
+  .primary { font-size: 10px; padding-left: 6px; padding-right: 6px; }
+  .module-order { gap: 2px; }
+  .module-order span { font-size: 8px; }
+}
+@media (min-width:1000px) and (max-height:760px) {
+  .masthead { min-height: 40px; }
+  .clue-panel, .ring-panel { padding: 10px; }
+  .clue { font-size: 11.5px; padding: 2px 0; line-height: 1.35; }
+  .rule { font-size: 10.5px; margin-top: 7px; padding: 6px 0; }
+  .ring-diagram { height: 130px; }
+  .ring-note { margin-bottom: 8px; }
+  .work-panel { padding: 10px; }
+  .bank { margin-top: 6px; }
+  .token { min-height: 22px; padding-top: 2px; padding-bottom: 2px; }
+  .tray-items { min-height: 72px; gap: 3px; }
+  .tray-head { margin-bottom: 4px; }
+  .records tbody td { padding-top: 4px; padding-bottom: 4px; }
+  .slot { min-height: 34px; }
+  .selection-bar { min-height: 23px; margin-top: 3px; margin-bottom: 4px; }
+  .unlock-panel { padding-top: 9px; padding-bottom: 9px; }
+}
+@media (max-width:999px) {
+  .layout { grid-template-columns: minmax(0,1fr) minmax(230px,.7fr); gap: 10px; }
+  .clue-panel { padding: 13px; }
+  .clues { display: flex; flex-direction: column; }
+  .clues li + li { border-top: 1px solid #344c5b66; }
+  .clue { font-size: 12px; padding: 5px 0; }
+  .ring-panel { padding: 13px; }
+  .workspace { grid-column: 1 / -1; }
+  .bank { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .token { font-size: 11px; min-height: 29px; }
+  .tray-items { min-height: 95px; }
+  .records thead th:first-child { width: 55px; }
+  .records tbody th { font-size: 11px; }
+  .slot { min-height: 45px; font-size: 11px; }
+  .unlock-panel { grid-template-columns: minmax(0,1fr) minmax(250px,1fr); }
+}
+@media (max-width:640px) {
+  .layout { grid-template-columns: minmax(0,1fr); }
+  .clue-panel { padding: 12px; }
+  .clue { font-size: 13px; min-height: 43px; }
+  .ring-panel { padding: 12px; }
+  .ring-diagram { height: 195px; }
+  .ring-note { font-size: 11px; }
+  .work-panel { padding: 10px; }
+  .work-heading h2 { font-size: 15px; }
+  .bank { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .tray { padding: 7px; }
+  .tray-items { min-height: 140px; gap: 4px; }
+  .token { font-size: 11px; padding: 5px 3px; min-height: 44px; }
+  .tray-head h3 { font-size: 11px; }
+  .tray-count { font-size: 9px; }
+  .token .swatch { display: inline-block; }
+  .selection-bar { min-height: 32px; margin-top: 5px; margin-bottom: 5px; }
+  .records thead th:first-child { width: 41px; }
+  .records thead th { padding: 7px 1px; }
+  .records tbody th { padding-left: 1px; padding-right: 1px; font-size: 9px; }
+  .records tbody td { padding: 5px 2px; }
+  .node-heading { font-size: 12px; }
+  .node-heading .icon { display: none; }
+  .slot { font-size: 9px; min-height: 44px; padding: 4px 1px; gap: 2px; }
+  .slot .swatch { width: 5px; height: 5px; }
+  .unlock-panel { display: block; padding: 13px; }
+  .unlock-title h2 { font-size: 16px; }
+  .combination-form { border-left: 0; padding-left: 0; }
+  .combination { min-width: 100px; font-size: 24px; }
+  .primary { min-height: 45px; font-size: 12px; }
+  .module-order { gap: 5px; }
+  .module-order span { font-size: 10px; }
+  .module-order .icon { width: 12px; }
+  .answer-message, .extract-note { font-size: 11px; }
+}
+@media (max-width:400px) {
+  .slot .swatch, .token .swatch { display: none; }
+  .token { font-size: 10px; }
+  .slot { font-size: 9px; }
+  .records thead th:first-child { width: 37px; }
+  .records tbody th { font-size: 8px; }
+  .work-heading h2 { font-size: 13px; }
+}
+@media print {
+  .layout { display: block; }
+  .ring-panel { margin-top: 12px; }
+  .ring-node text, .ring-sequence, .ring-note, .node-heading { color: #18352d !important; fill: #18352d; }
+  .ring-node circle { fill: #fff; stroke: #3d675c; }
+  .bank { display: none; }
+}
+
+/* All-clues-true edition */
+.ring-diagram { height: auto; min-height: 150px; flex: 1; }
+.ring-node text { font-size: 20px; }
+.ring-note { font-size: 11px; margin: 8px 0 4px; }
+.ring-extraction { margin-top: 10px; padding-top: 10px; border-top: 1px solid #48616b; flex: 0 0 auto; }
+.ring-extraction h3 { font-size: 13px; }
+.ring-extraction .module-order { margin-top: 8px; margin-bottom: 7px; }
+.ring-extraction .extract-note { font-size: 11px; line-height: 1.5; }
+@media (min-width: 1400px) and (min-height: 850px) {
+  .ring-note, .ring-extraction .extract-note { font-size: 12px; }
+}
+@media (max-width: 640px) {
+  .ring-diagram { min-height: 180px; flex: 0 0 auto; }
+  .ring-extraction { margin-top: 8px; padding-top: 9px; }
+}
+
+/* Short Junior mission */
+@media (min-width: 1000px) {
+  .clue { font-size: 13px; line-height: 1.45; padding-top: 4px; padding-bottom: 4px; }
+  .token { font-size: 11px; min-height: 27px; }
+  .tray-items { min-height: 89px; }
+  .tray-head h3 { font-size: 12px; }
+  .slot { font-size: 12px; min-height: 45px; }
+  .records tbody th { font-size: 11px; }
+}
+@media (min-width: 1400px) and (min-height: 850px) {
+  .clue { font-size: 14px; }
+  .token { font-size: 12px; }
+  .slot { font-size: 13px; min-height: 50px; }
+}
+@media (max-width: 640px) {
+  .bank .tray:last-child { grid-column: 1 / -1; }
+  .bank .tray:last-child .tray-items { grid-template-columns: repeat(5,minmax(0,1fr)); min-height: 44px; }
+}
+
+/* Enhanced features */
+.timer-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #112838, #0b1a26); border: 1px solid #00f2fe; border-radius: 6px; padding: 3px 9px; color: #00f2fe; font: 700 11.5px var(--mono); cursor: pointer; user-select: none; box-shadow: 0 0 8px rgba(0, 242, 254, 0.25); transition: all 0.2s; }
+.timer-badge:hover { background: #17384e; box-shadow: 0 0 14px rgba(0, 242, 254, 0.45); }
+.sound-toggle { display: inline-flex; align-items: center; justify-content: center; background: #112838; border: 1px solid #38bdf8; border-radius: 6px; padding: 3px 8px; color: #38bdf8; font-size: 12px; cursor: pointer; line-height: 1; user-select: none; box-shadow: 0 0 8px rgba(56, 189, 248, 0.2); }
+.sound-toggle:hover { background: #1a3d54; border-color: #00f2fe; }
+
+@keyframes dashAnim { to { stroke-dashoffset: -24; } }
+.touch-ghost { position: fixed; pointer-events: none; z-index: 10000; opacity: 0.9; transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
+
+/* Security Passcode Gate Screen */
+.security-gate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: radial-gradient(circle at center, #182a39 0%, #0d1620 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.security-gate-overlay[hidden] {
+  display: none !important;
+}
+.gate-card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(135deg, rgba(14, 25, 38, 0.95), rgba(8, 16, 26, 0.98) 70%);
+  border: 1.5px solid rgba(0, 242, 254, 0.4);
+  border-radius: 16px;
+  padding: 36px 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 242, 254, 0.2), inset 0 1px rgba(0, 242, 254, 0.3);
+  text-align: center;
+  position: relative;
+}
+
+.gate-icon-wrap {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 16px;
+  background: #244143;
+  border: 1px solid #578a84;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #a7e0cc;
+  box-shadow: 0 0 20px #578a8430;
+}
+.gate-icon-wrap svg {
+  width: 30px;
+  height: 30px;
+}
+.gate-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #eaf3f5;
+}
+.gate-prompt {
+  margin: 0 0 22px;
+  font-size: 13.5px;
+  color: #9cb6c4;
+  line-height: 1.4;
+}
+.gate-input-group {
+  margin-bottom: 16px;
+}
+.gate-input {
+  width: 100%;
+  max-width: 250px;
+  padding: 10px 14px;
+  border: 1.5px solid #5b7e8d;
+  border-radius: 8px;
+  background: #0f1d27;
+  color: #f3f6e8;
+  font: 26px/1.2 var(--mono);
+  letter-spacing: .35em;
+  text-align: center;
+  outline: none;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.gate-input:focus {
+  border-color: #79cfb7;
+  box-shadow: 0 0 12px #79cfb740, inset 0 2px 6px rgba(0,0,0,0.4);
+}
+.gate-input.is-invalid {
+  border-color: #f1a3a3;
+  animation: gateShake 0.4s ease;
+}
+@keyframes gateShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+.gate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 250px;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1.5px solid #00f2fe;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #00f2fe, #0099ff);
+  color: #041624;
+  font: 800 13px var(--sans);
+  letter-spacing: .06em;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.45);
+  transition: all 0.2s ease;
+}
+.gate-btn:hover {
+  background: linear-gradient(135deg, #33f6ff, #1aa3ff);
+  box-shadow: 0 0 26px rgba(0, 242, 254, 0.7);
+  transform: translateY(-1px);
+}
+.gate-error-msg {
+  min-height: 20px;
+  margin: 12px 0 0;
+  font: 12px var(--mono);
+  color: #f4b4a3;
+}
+</style>
+</head>
+<body>
+  <div class="security-gate-overlay" id="security-gate" role="dialog" aria-modal="true" aria-label="Enter the passcode to view code Y">
+    <div class="gate-card">
+      <div class="gate-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <p class="gate-prompt">Enter the passcode to view code Y</p>
+      <form id="gate-form" onsubmit="return false;" autocomplete="off">
+        <div class="gate-input-group">
+          <input type="password" class="gate-input" id="gate-input" maxlength="10" placeholder="••••" inputmode="numeric" autofocus required aria-label="Passcode">
+        </div>
+        <button type="submit" class="gate-btn" id="gate-submit">
+          <span>UNLOCK ACCESS</span>
+          <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+        <div class="gate-error-msg" id="gate-error" role="alert"></div>
+      </form>
+    </div>
+  </div>
+  <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;display:none;"></canvas>
+  <a class="skip-link" href="#records-heading">Skip to core ring records</a>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+    <defs>
+      <symbol id="i-chip" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="4"/><path d="M9 1v4m6-4v4M9 19v4m6-4v4M1 9h4m-4 6h4m14-6h4m-4 6h4"/><path d="M9 10h.01M15 10h.01M9 14c2 1.5 4 1.5 6 0"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></symbol>
+      <symbol id="i-unlock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 7.5-2M12 14v3"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="m9 5-5 5 5 5M4 10h10a6 6 0 0 1 0 12"/></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+      <symbol id="i-drone" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M7 41h50l-4-10H11zM13 44h38M18 35h5m18 0h5"/><ellipse cx="13" cy="10" rx="10" ry="3"/><ellipse cx="51" cy="10" rx="10" ry="3"/><path d="M13 10v11l9 5m29-16v11l-9 5M19 17h26"/><rect x="23" y="15" width="18" height="16" rx="5"/><path d="M28 21h.01M36 21h.01m-9 5h10M32 15V8m-4 0h8"/></g><circle cx="32" cy="37" r="1.6" fill="currentColor"/></symbol>
+    </defs>
+  </svg>
+  <main class="page" id="nova-junior">
+    <header class="masthead">
+      <div class="brand"><div class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg></div><div><div class="brand-name">NOVA</div><div class="brand-sub">NEURAL RECOVERY LAB</div></div></div>
+      <div class="division">
+        <div class="timer-badge" id="timer-badge" title="Đồng hồ tính giờ thi đua (Nhấp để Tạm dừng/Tiếp tục)"><svg class="icon" style="width:13px;height:13px;" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" fill="none"/><path d="M12 7v5l3 3" stroke="currentColor"/></svg><span id="timer-display">00:00</span></div>
+        <button type="button" class="sound-toggle" id="sound-toggle" aria-label="Bật/Tắt âm thanh" title="Bật/Tắt hiệu ứng âm thanh"><span id="sound-icon">🔊</span></button>
+        <span><i class="live-dot" aria-hidden="true"></i>CODE Y / CORE RECOVERY</span>
+        <span>JUNIOR · GRADES 6–8</span>
+      </div>
+    </header>
+    <section class="hero" aria-labelledby="mission-heading">
+      <div><h1 id="mission-heading">The Core Recovery Ring</h1><p>NOVA’s five processing nodes have returned scrambled records. Use the verified clues to rebuild the core ring and recover Code Y.</p></div>
+      <svg class="hero-art" viewBox="0 0 165 50" fill="none" aria-hidden="true"><path d="M0 11h26l12 12h21m47 0h20l12-12h27M0 38h34l10-8h15m47 0h15l10 8h34" stroke="#658993"/><path d="M19 3h33l10 7h41l9-7h34M35 46h94" stroke="#4b697c"/><rect x="59" y="9" width="47" height="31" rx="9" fill="#304c54" stroke="#86b4b4"/><rect x="67" y="16" width="31" height="15" rx="5" fill="#193440" stroke="#6c9caa"/><path d="M75 23h1m13 0h1m-10 4h5" stroke="#bbdfca" stroke-width="2" stroke-linecap="round"/><path d="M83 9V4m-4 0h8" stroke="#95bfc1"/><g fill="#93b7bc"><circle cx="2" cy="11" r="2"/><circle cx="2" cy="38" r="2"/><circle cx="163" cy="11" r="2"/><circle cx="163" cy="38" r="2"/></g><path d="M42 15h8m65 0h8M44 35h6m65 0h6" stroke="#b6b18a"/></svg>
+    </section>
+    <div class="layout">
+      <aside class="panel clue-panel" aria-labelledby="clues-heading">
+        <div class="panel-kicker">01 / Verified intelligence</div>
+        <div class="section-head"><h2 id="clues-heading">Recovery clues</h2><span class="note-count" id="clue-count">0 / 11 marked</span></div>
+        <div class="rule"><p>Each node has one module, beacon and digit. Use every tile <strong>exactly once</strong>.</p><p><strong>All eleven clues below are true.</strong> Reconstruct the records and enter Code Y.</p></div>
+        <p class="note-hint">Checkmarks are your notes, not a correctness check.</p>
+        <ol class="clues" id="clues-list">
+<li><label class="clue"><input type="checkbox" data-clue="0"><span class="clue-number">01</span><span class="clue-text">The <strong>MEMORY</strong> module is on node D.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="1"><span class="clue-number">02</span><span class="clue-text">The <strong>WHITE</strong> beacon belongs to the node running <strong>ROUTING</strong>.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="2"><span class="clue-number">03</span><span class="clue-text"><strong>CYAN</strong> is immediately clockwise from <strong>VIOLET</strong>.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="3"><span class="clue-number">04</span><span class="clue-text"><strong>VISION</strong> is immediately clockwise from <strong>ROUTING</strong>.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="4"><span class="clue-number">05</span><span class="clue-text">The node with the <strong>CYAN</strong> beacon has digit 3.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="5"><span class="clue-number">06</span><span class="clue-text"><strong>ROUTING</strong> is immediately clockwise from <strong>SPEECH</strong>.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="6"><span class="clue-number">07</span><span class="clue-text">Node E has digit 8.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="7"><span class="clue-number">08</span><span class="clue-text"><strong>AMBER</strong> is immediately clockwise from <strong>WHITE</strong>.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="8"><span class="clue-number">09</span><span class="clue-text"><strong>LOGIC</strong> is exactly two clockwise steps from <strong>ROUTING</strong>.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="9"><span class="clue-number">10</span><span class="clue-text">The node running <strong>ROUTING</strong> has digit 6.</span></label></li>
+<li><label class="clue"><input type="checkbox" data-clue="10"><span class="clue-number">11</span><span class="clue-text">The <strong>AMBER</strong> node has a smaller digit than the <strong>VIOLET</strong> node.</span></label></li>
+</ol>
+      </aside>
+      <section class="panel ring-panel" aria-labelledby="ring-heading">
+        <div class="section-head"><h2 id="ring-heading">Core topology</h2><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg></div>
+        <p class="ring-sequence">A → B → C → D → E → A</p>
+        <svg class="ring-diagram" viewBox="0 0 240 198" role="img" aria-labelledby="ring-title ring-desc">
+          <title id="ring-title">Fixed clockwise core ring</title><desc id="ring-desc">A is at the top, followed clockwise by B, C, D, E and back to A. Adjacent nodes share a ring edge. A and E are adjacent.</desc>
+          <defs><marker id="ring-arrow" viewBox="0 0 6 6" refX="5.5" refY="3" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 6 3 0 6z" fill="#a6c7cc"/></marker></defs>
+          <circle class="ring-back" cx="120" cy="103" r="60"/>
+          <g class="ring-edge" marker-end="url(#ring-arrow)"><path d="M135 33 190 70"/><path d="M199 97 179 156"/><path d="M155 173H85"/><path d="M61 156 41 97"/><path d="M50 70 105 33"/></g>
+          <g class="ring-node" data-ring-node="0"><circle cx="120" cy="23" r="15"/><text x="120" y="23">A</text></g>
+          <g class="ring-node" data-ring-node="1"><circle cx="205" cy="80" r="15"/><text x="205" y="80">B</text></g>
+          <g class="ring-node" data-ring-node="2"><circle cx="173" cy="173" r="15"/><text x="173" y="173">C</text></g>
+          <g class="ring-node" data-ring-node="3"><circle cx="67" cy="173" r="15"/><text x="67" y="173">D</text></g>
+          <g class="ring-node" data-ring-node="4"><circle cx="35" cy="80" r="15"/><text x="35" y="80">E</text></g>
+          <rect x="98" y="87" width="44" height="31" rx="7" fill="#294650" stroke="#749ba5"/>
+          <path d="M108 82v5m12-5v5m12-5v5m-24 31v5m12-5v5m12-5v5M93 97h5m-5 11h5m44-11h5m-5 11h5" stroke="#769da5"/>
+          <text x="120" y="107" text-anchor="middle" fill="#c5dfd6" style="font:600 11px var(--mono)">NOVA</text>
+          <text x="120" y="140" text-anchor="middle" fill="#a6bec7" style="font:8px var(--mono);letter-spacing:.07em">CLOCKWISE</text>
+
+        </svg>
+        <p class="ring-note">Follow the arrows clockwise. E connects back to A. Example: E → A → B is two clockwise steps.</p>
+        <div class="ring-extraction"><h3>Recover Code Y</h3><div class="module-order" aria-label="Read the digit at VISION, then the digits on the next three clockwise nodes"><span>VISION</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span>+1</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span>+2</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span>+3</span></div><p class="extract-note" id="extraction-help">Start at VISION. Read its digit, then the next three nodes clockwise. Stop after four digits; skip the fifth node.</p></div>
+      </section>
+      <div class="workspace">
+        <section class="panel work-panel" aria-labelledby="records-heading">
+          <div class="section-head"><div class="work-heading"><span class="step-number">02</span><h2 id="records-heading">Reconstruct the nodes</h2></div><span class="placement-count" id="placement-count" aria-live="polite">0 / 15 placed</span></div>
+          <p class="subtext" id="placement-help">Drag tiles to matching cells, or select then place. Occupied cells swap tiles; Delete returns a tile.</p>
+          <div class="bank" id="tile-bank" aria-label="Available record tiles"></div>
+          <div class="selection-bar"><span id="selection-text">No tile selected.</span><button type="button" class="text-button" id="return-tile" hidden>Return to tray</button><button type="button" class="text-button" id="cancel-selection" hidden>Cancel selection</button></div>
+          <div class="table-area">
+            <table class="records" aria-describedby="placement-help ring-desc">
+              <caption class="sr-only">Record columns list nodes in clockwise order A, B, C, D, E. Node E wraps back to node A. Rows identify modules, beacons and digits.</caption>
+              <thead><tr><th scope="col">Record</th><th scope="col" data-node-header="0"><span class="node-heading"><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg>A</span></th><th scope="col" data-node-header="1"><span class="node-heading"><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg>B</span></th><th scope="col" data-node-header="2"><span class="node-heading"><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg>C</span></th><th scope="col" data-node-header="3"><span class="node-heading"><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg>D</span></th><th scope="col" data-node-header="4"><span class="node-heading"><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg>E</span></th></tr></thead>
+              <tbody id="records-body"></tbody>
+            </table>
+          </div>
+          <div class="board-footer"><div class="board-actions"><button type="button" class="utility" id="undo-move" disabled><svg class="icon" aria-hidden="true"><use href="#i-undo"/></svg>Undo</button><button type="button" class="utility" id="reset-puzzle"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg>Start again</button></div><p class="board-message" id="board-message" role="status" aria-live="polite" aria-atomic="true">All 15 tiles are available. Reconstruct the core ring.</p><span class="save-note" id="save-note">Progress stays on this device</span></div>
+        </section>
+        <section class="panel unlock-panel" id="unlock-panel" aria-labelledby="unlock-heading">
+          <div class="extraction"><div class="unlock-title"><span class="lock-icon"><svg class="icon" aria-hidden="true"><use id="lock-use" href="#i-lock"/></svg></span><h2 id="unlock-heading">Unlock the recovery file</h2></div><p class="subtext">Enter the four digits recovered from the ring.</p></div>
+          <form class="combination-form" id="combination-form" novalidate><label class="code-label" for="combination">CODE Y / 4-DIGIT COMBINATION</label><div class="code-controls"><input class="combination" id="combination" name="combination" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="off" spellcheck="false" placeholder="····" aria-describedby="extraction-help answer-message"><button class="primary" id="check-code" type="submit" disabled><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span>Check Code Y</span></button></div><p class="answer-message" id="answer-message" role="status" aria-live="polite" aria-atomic="true">Enter your four-digit combination when you’re ready.</p></form>
+        </section>
+      </div>
+    </div>
+    <footer class="page-footer"><span>NOVA / CODE Y / JUNIOR</span><span class="footer-circuit">OBSERVE · DEDUCE · RECONNECT</span></footer>
+  </main>
+  <dialog id="reset-dialog" aria-labelledby="reset-heading" aria-describedby="reset-description"><h2 id="reset-heading">Start a new attempt?</h2><p id="reset-description">This clears the node records, clue checkmarks and entered code for the next team.</p><div class="dialog-actions"><button type="button" class="utility" id="cancel-reset">Keep working</button><button type="button" class="primary" id="confirm-reset">Start again</button></div></dialog>
+  <noscript><p style="padding:24px">Enable JavaScript to move the tiles and check your answers. The riddle and core ring are visible above.</p></noscript>
+  <script>
+  (() => {
+  'use strict';
+  const STORAGE_KEY = 'nova-code-y-junior-core-ring-v3';
+  const CLUE_COUNT = 11;
+  const NODES = ['A', 'B', 'C', 'D', 'E'];
+  const CATEGORIES = [
+    {id:'module',label:'Module',title:'Modules',values:['VISION','MEMORY','LOGIC','SPEECH','ROUTING']},
+    {id:'beacon',label:'Beacon',title:'Beacons',values:['AMBER','CYAN','LIME','VIOLET','WHITE']},
+    {id:'digit',label:'Digit',title:'Digits',values:['1','3','6','8','9']}
+  ];
+  const TILE_COUNT = NODES.length * CATEGORIES.length;
+  const catalog = new Map();
+  CATEGORIES.forEach(category => category.values.forEach(value => {
+    const id=category.id+':'+value;
+    catalog.set(id,{id,category:category.id,value});
+  }));
+  const root=document.getElementById('nova-junior');
+  const bank=document.getElementById('tile-bank');
+  const body=document.getElementById('records-body');
+  const input=document.getElementById('combination');
+  const codeButton=document.getElementById('check-code');
+  const answerMessage=document.getElementById('answer-message');
+  const boardMessage=document.getElementById('board-message');
+  const undoButton=document.getElementById('undo-move');
+  const resetDialog=document.getElementById('reset-dialog');
+  const history=[];
+  let state=newState();
+  let selected=null;
+  let dragging=null;
+  let storageAvailable=true;
+
+  /* === [ĐIỀU 6] BẢO MẬT ĐÁP ÁN: SHA-256 + SECRET SALT === */
+  const TARGET_HASH = 'f85b1c718bf7de79c97bc11505df48902cc2d135104e11a35b5d131b7165d64f';
+  const SALT = 'NOVA_OLYMPIA_SECURE_TOKEN_2026_';
+
+  async function computeCodeHash(code) {
+    if (window.crypto && crypto.subtle) {
+      const msgUint8 = new TextEncoder().encode(SALT + code);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    let h = 2166136261;
+    const str = SALT + code;
+    for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+    return (h >>> 0).toString(16);
+  }
+
+  /* === [ĐIỀU 1] HIỆU ỨNG ÂM THANH (WEB AUDIO API - 100% OFFLINE) === */
+  const Audio = (() => {
+    let ctx = null;
+    let muted = false;
+    function getContext() {
+      if (!ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) ctx = new AudioCtx();
+      }
+      if (ctx && ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    }
+    function tone(freq, type, duration, gainLevel = 0.1) {
+      if (muted) return;
+      try {
+        const c = getContext();
+        if (!c) return;
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, c.currentTime);
+        gain.gain.setValueAtTime(gainLevel, c.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(c.destination);
+        osc.start();
+        osc.stop(c.currentTime + duration);
+      } catch (_) {}
+    }
+    return {
+      toggle() { muted = !muted; return !muted; },
+      isMuted() { return muted; },
+      click() { tone(520, 'sine', 0.05, 0.08); },
+      place() {
+        tone(680, 'triangle', 0.08, 0.12);
+        setTimeout(() => tone(880, 'sine', 0.09, 0.1), 50);
+      },
+      remove() { tone(360, 'sine', 0.08, 0.08); },
+      error() {
+        tone(220, 'sawtooth', 0.15, 0.12);
+        setTimeout(() => tone(180, 'sawtooth', 0.2, 0.12), 100);
+      },
+      success() {
+        const notes = [440, 554.37, 659.25, 880];
+        notes.forEach((freq, idx) => {
+          setTimeout(() => tone(freq, 'triangle', 0.35, 0.18), idx * 110);
+        });
+        setTimeout(() => {
+          [554.37, 659.25, 880, 1108.7].forEach(f => tone(f, 'sine', 0.6, 0.1));
+        }, 500);
+      }
+    };
+  })();
+
+  /* === [ĐIỀU 1] HIỆU ỨNG PHÁO HOA CHIẾN THẮNG (CONFETTI CANVAS) === */
+  function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    if (!canvas) return;
+    canvas.style.display = 'block';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const ctx = canvas.getContext('2d');
+    const colors = ['#9ccfc2', '#8ec3ac', '#a8c3e1', '#e9d8b7', '#f1b5a3', '#68f3c7', '#ffffff'];
+    const particles = Array.from({ length: 130 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height * 0.5,
+      w: Math.random() * 10 + 5,
+      h: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 3.5,
+      vy: Math.random() * 3 + 2.5,
+      rot: Math.random() * 360,
+      vrot: (Math.random() - 0.5) * 8
+    }));
+    let frames = 0;
+    function anim() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vrot;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rot * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      frames++;
+      if (frames < 240) {
+        requestAnimationFrame(anim);
+      } else {
+        canvas.style.display = 'none';
+      }
+    }
+    requestAnimationFrame(anim);
+  }
+
+  /* === [ĐIỀU 5] ĐỒNG HỒ TÍNH GIỜ THI ĐUA (STOPWATCH) === */
+  let timerSeconds = 0;
+  let timerActive = true;
+  let timerInterval = null;
+  function formatTimer(s) {
+    const m = String(Math.floor(s / 60)).padStart(2, '0');
+    const sec = String(s % 60).padStart(2, '0');
+    return `${m}:${sec}`;
+  }
+  function updateTimerDisplay() {
+    const display = document.getElementById('timer-display');
+    if (display) display.textContent = formatTimer(timerSeconds);
+  }
+  function initTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      if (timerActive && !state.solved) {
+        timerSeconds++;
+        updateTimerDisplay();
+      }
+    }, 1000);
+  }
+
+  function newState() {
+    return {version:3,rows:NODES.map(()=>({module:null,beacon:null,digit:null})),clues:Array(CLUE_COUNT).fill(false),combination:'',solved:false};
+  }
+  function categoryInfo(id) { return CATEGORIES.find(category=>category.id===id); }
+  function locate(id) {
+    const tile=catalog.get(id);
+    return tile ? state.rows.findIndex(row=>row[tile.category]===id) : -1;
+  }
+  function announce(message,error=false) {
+    boardMessage.textContent=message;
+    boardMessage.classList.toggle('is-error',error);
+  }
+  function persist() {
+    try { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }
+    catch (_) { storageAvailable=false; }
+    document.getElementById('save-note').textContent=storageAvailable?'Progress stays on this device':'Progress is kept in this open page';
+  }
+  function restore() {
+    try {
+      const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!saved||saved.version!==3||!Array.isArray(saved.rows)||saved.rows.length!==NODES.length) return;
+      const clean=newState(),used=new Set();
+      saved.rows.forEach((row,index)=>CATEGORIES.forEach(category=>{
+        const id=row&&row[category.id];
+        if (catalog.has(id)&&catalog.get(id).category===category.id&&!used.has(id)) {
+          clean.rows[index][category.id]=id;used.add(id);
+        }
+      }));
+      clean.clues=Array.from({length:CLUE_COUNT},(_,i)=>Boolean(saved.clues&&saved.clues[i]===true));
+      clean.combination=typeof saved.combination==='string'?saved.combination.replace(/\D/g,'').slice(0,4):'';
+      clean.solved=saved.solved===true;
+      state=clean;
+    } catch (_) {storageAvailable=false;}
+  }
+  function swatch(tile) {
+    return tile.category==='beacon'?'<span class="swatch '+tile.value.toLowerCase()+'" aria-hidden="true"></span>':'';
+  }
+  function renderBank() {
+    bank.innerHTML=CATEGORIES.map(category=>{
+      const available=category.values.map(value=>catalog.get(category.id+':'+value)).filter(tile=>locate(tile.id)===-1);
+      return '<section class="tray" data-tray="'+category.id+'" aria-label="'+category.title+' tray"><div class="tray-head"><h3>'+category.title+'</h3><span class="tray-count">'+available.length+' left</span></div><div class="tray-items">'+
+        (available.length?available.map(tile=>'<button type="button" class="token" draggable="true" data-token="'+tile.id+'" data-category="'+tile.category+'" aria-label="Select '+tile.value+', '+category.label.toLowerCase()+'" aria-pressed="false">'+swatch(tile)+tile.value+'</button>').join(''):'<p class="tray-empty">All five placed</p>')+'</div></section>';
+    }).join('');
+  }
+  function renderBoard() {
+    body.innerHTML=CATEGORIES.map(category=>'<tr data-record-type="'+category.id+'"><th scope="row">'+category.label+'</th>'+state.rows.map((row,node)=>{
+      const tile=catalog.get(row[category.id]);
+      return '<td><button type="button" class="slot'+(tile?' is-filled':'')+'" data-node="'+node+'" data-category="'+category.id+'"'+(tile?' data-token="'+tile.id+'" draggable="true"':'')+' aria-label="Node '+NODES[node]+', '+category.label.toLowerCase()+', '+(tile?tile.value+'. Select to move, or press Delete to return to tray.':'empty. Select to place your chosen '+category.label.toLowerCase()+'.')+'" aria-pressed="false">'+(tile?swatch(tile)+tile.value:'<span aria-hidden="true">+</span>')+'</button></td>';
+    }).join('')+'</tr>').join('');
+    const placed=state.rows.reduce((sum,row)=>sum+CATEGORIES.filter(category=>row[category.id]).length,0);
+    document.getElementById('placement-count').textContent=placed+' / '+TILE_COUNT+' placed';
+    undoButton.disabled=history.length===0;
+  }
+  function renderNotes() {
+    root.querySelectorAll('[data-clue]').forEach(checkbox=>{
+      checkbox.checked=state.clues[Number(checkbox.dataset.clue)];
+      checkbox.closest('.clue').classList.toggle('is-marked',checkbox.checked);
+    });
+    document.getElementById('clue-count').textContent=state.clues.filter(Boolean).length+' / '+CLUE_COUNT+' marked';
+  }
+  function renderSelection() {
+    root.querySelectorAll('[data-token]').forEach(button=>{
+      const active=button.dataset.token===selected;
+      button.classList.toggle('is-selected',active);button.setAttribute('aria-pressed',String(active));
+    });
+    const tile=catalog.get(selected),text=document.getElementById('selection-text');
+    text.replaceChildren();
+    if (tile) {
+      const strong=document.createElement('strong');strong.textContent=tile.value;
+      text.append(strong,document.createTextNode(' selected. Choose its '+categoryInfo(tile.category).label.toLowerCase()+' cell.'));
+    } else text.textContent='No tile selected.';
+    document.getElementById('cancel-selection').hidden=!tile;
+    document.getElementById('return-tile').hidden=!tile||locate(tile.id)===-1;
+  }
+  function ready() {return /^\d{4}$/.test(state.combination);}
+  function renderAnswer() {
+    input.value=state.combination;input.disabled=state.solved;
+    codeButton.disabled=state.solved||!ready();
+    codeButton.classList.toggle('is-unlocked',state.solved);
+    codeButton.innerHTML='<svg class="icon" aria-hidden="true"><use href="#'+(state.solved?'i-check':'i-lock')+'"/></svg><span>'+(state.solved?'Unlocked':'Check Code Y')+'</span>';
+    document.getElementById('unlock-panel').classList.toggle('is-solved',state.solved);
+    document.getElementById('lock-use').setAttribute('href',state.solved?'#i-unlock':'#i-lock');
+    document.getElementById('unlock-heading').textContent=state.solved?'Recovery file unlocked':'Unlock the recovery file';
+    answerMessage.className='answer-message'+(state.solved?' is-success':'');
+    answerMessage.textContent=state.solved?'Code Y accepted. NOVA can continue its recovery.':ready()?'Ready to check Code Y.':'Enter your four-digit combination when you’re ready.';
+    input.removeAttribute('aria-invalid');
+    updateExtractionGuide();
+  }
+  function highlightNode(index) {
+    root.querySelectorAll('[data-ring-node]').forEach(node=>node.classList.toggle('is-active',node.dataset.ringNode===index));
+    root.querySelectorAll('[data-node-header]').forEach(node=>node.classList.toggle('is-active',node.dataset.nodeHeader===index));
+  }
+  function updateExtractionGuide() {
+    // Hint removed as requested
+  }
+  function redraw() {
+    renderBank();
+    renderBoard();
+    renderNotes();
+    renderSelection();
+    updateExtractionGuide();
+  }
+  function rememberBoard() {
+    history.push(state.rows.map(row=>({...row})));if(history.length>70)history.shift();
+  }
+  function focusCell(index,category) {
+    const target=body.querySelector('[data-node="'+index+'"][data-category="'+category+'"]');
+    if(target)target.focus({preventScroll:true});
+  }
+  function place(id,index,category) {
+    const tile=catalog.get(id);
+    if(!tile||!Number.isInteger(index)||index<0||index>=NODES.length)return;
+    if(tile.category!==category){
+      Audio.error();
+      announce(tile.value+' belongs in the '+categoryInfo(tile.category).label.toLowerCase()+' row.',true);
+      return;
+    }
+    const source=locate(id);
+    if(source===index){selected=null;renderSelection();return;}
+    rememberBoard();const displaced=state.rows[index][category];
+    if(source!==-1)state.rows[source][category]=displaced||null;
+    state.rows[index][category]=id;selected=null;
+    Audio.place();
+    redraw();persist();focusCell(index,category);
+    announce(tile.value+' placed on node '+NODES[index]+'.'+(displaced?(source!==-1?' The two tiles were swapped.':' The previous tile returned to its tray.') :''));
+  }
+  function remove(id) {
+    const tile=catalog.get(id);if(!tile)return;
+    const index=locate(id);if(index===-1)return;
+    rememberBoard();state.rows[index][tile.category]=null;selected=null;
+    Audio.remove();
+    redraw();persist();focusCell(index,tile.category);announce(tile.value+' returned to its tray.');
+  }
+  function select(id) {
+    if(!catalog.has(id))return;
+    selected=selected===id?null:id;
+    Audio.click();
+    renderSelection();
+    announce(selected?catalog.get(id).value+' selected. Choose its matching cell.':'Selection cancelled.');
+  }
+
+  /* === [ĐIỀU 2] HỖ TRỢ KÉO THẢ CẢM ỨNG MƯỢT MÀ (IPAD & TABLET TOUCH DRAG) === */
+  let touchDraggingTile = null;
+  let touchGhost = null;
+  let touchStartPos = { x: 0, y: 0 };
+  let isTouchDragging = false;
+
+  root.addEventListener('touchstart', event => {
+    const source = event.target.closest('[data-token]');
+    if (!source) return;
+    const touch = event.touches[0];
+    touchStartPos = { x: touch.clientX, y: touch.clientY };
+    touchDraggingTile = source.dataset.token;
+    isTouchDragging = false;
+  }, { passive: true });
+
+  root.addEventListener('touchmove', event => {
+    if (!touchDraggingTile) return;
+    const touch = event.touches[0];
+    const dx = touch.clientX - touchStartPos.x;
+    const dy = touch.clientY - touchStartPos.y;
+    if (!isTouchDragging && Math.hypot(dx, dy) > 10) {
+      isTouchDragging = true;
+      const tile = catalog.get(touchDraggingTile);
+      if (!touchGhost && tile) {
+        touchGhost = document.createElement('div');
+        touchGhost.className = 'token touch-ghost';
+        touchGhost.innerHTML = swatch(tile) + tile.value;
+        document.body.appendChild(touchGhost);
+      }
+    }
+    if (isTouchDragging && touchGhost) {
+      event.preventDefault();
+      touchGhost.style.left = touch.clientX + 'px';
+      touchGhost.style.top = touch.clientY + 'px';
+      const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+      clearTargets();
+      if (elem) {
+        const cell = elem.closest('.slot');
+        const tray = elem.closest('[data-tray]');
+        const cat = catalog.get(touchDraggingTile).category;
+        if (cell && cell.dataset.category === cat) {
+          cell.classList.add('is-target');
+          highlightNode(cell.dataset.node);
+        } else if (tray && tray.dataset.tray === cat && locate(touchDraggingTile) !== -1) {
+          tray.classList.add('is-return-target');
+        }
+      }
+    }
+  }, { passive: false });
+
+  root.addEventListener('touchend', event => {
+    if (!touchDraggingTile) return;
+    if (touchGhost) {
+      touchGhost.remove();
+      touchGhost = null;
+    }
+    if (isTouchDragging) {
+      const touch = event.changedTouches[0];
+      const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+      clearTargets();
+      if (elem) {
+        const cell = elem.closest('.slot');
+        const tray = elem.closest('[data-tray]');
+        if (cell) place(touchDraggingTile, Number(cell.dataset.node), cell.dataset.category);
+        else if (tray && tray.dataset.tray === catalog.get(touchDraggingTile).category) remove(touchDraggingTile);
+      }
+    }
+    touchDraggingTile = null;
+    isTouchDragging = false;
+  });
+
+  /* --- CÁC SỰ KIỆN CLICK, BÀN PHÍM VÀ KÉO THẢ CHUỘT --- */
+  root.addEventListener('click',event=>{
+    const cell=event.target.closest('.slot');
+    if(cell){
+      // Nếu ô đã có thẻ và người dùng bấm trực tiếp vào ô đó (khi chưa chọn thẻ khác, hoặc bấm lại chính nó): tự nhả về khay ban đầu
+      if(cell.dataset.token && (!selected || selected === cell.dataset.token)){
+        remove(cell.dataset.token);
+        return;
+      }
+      if(selected)place(selected,Number(cell.dataset.node),cell.dataset.category);
+      else announce('Select a tile from the '+categoryInfo(cell.dataset.category).title.toLowerCase()+' tray first.');
+      return;
+    }
+    const tile=event.target.closest('.token');if(tile)select(tile.dataset.token);
+  });
+  root.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){selected=null;renderSelection();clearTargets();}
+    const cell=event.target.closest('.slot');
+    if(cell&&cell.dataset.token&&(event.key==='Delete'||event.key==='Backspace')){event.preventDefault();remove(cell.dataset.token);}
+  });
+  root.addEventListener('change',event=>{
+    if(event.target.matches('[data-clue]')){
+      state.clues[Number(event.target.dataset.clue)]=event.target.checked;
+      Audio.click();
+      renderNotes();persist();
+    }
+  });
+  root.addEventListener('focusin',event=>{const cell=event.target.closest('.slot');highlightNode(cell?cell.dataset.node:null);});
+  function clearTargets() {
+    root.querySelectorAll('.is-target,.is-return-target,.is-dragging').forEach(element=>element.classList.remove('is-target','is-return-target','is-dragging'));
+  }
+  function dragId(event) {
+    if(dragging&&catalog.has(dragging))return dragging;
+    try{const id=event.dataTransfer.getData('application/x-nova-junior-core-tile');return catalog.has(id)?id:null;}catch(_){return null;}
+  }
+  root.addEventListener('dragstart',event=>{
+    const source=event.target.closest('[data-token]');if(!source)return;
+    dragging=source.dataset.token;selected=dragging;renderSelection();
+    event.dataTransfer.setData('application/x-nova-junior-core-tile',dragging);
+    event.dataTransfer.setData('text/plain',catalog.get(dragging).value);event.dataTransfer.effectAllowed='move';source.classList.add('is-dragging');
+  });
+  root.addEventListener('dragover',event=>{
+    if(!dragging||!catalog.has(dragging))return;
+    const cell=event.target.closest('.slot'),tray=event.target.closest('[data-tray]');
+    if(!cell&&!tray)return;
+    event.preventDefault();root.querySelectorAll('.is-target,.is-return-target').forEach(element=>element.classList.remove('is-target','is-return-target'));
+    const category=catalog.get(dragging).category;
+    if(cell&&cell.dataset.category===category){cell.classList.add('is-target');event.dataTransfer.dropEffect='move';highlightNode(cell.dataset.node);}
+    else if(tray&&tray.dataset.tray===category&&locate(dragging)!==-1){tray.classList.add('is-return-target');event.dataTransfer.dropEffect='move';}
+    else event.dataTransfer.dropEffect='none';
+  });
+  root.addEventListener('dragleave',event=>{
+    const zone=event.target.closest('.slot,[data-tray]');if(zone&&!zone.contains(event.relatedTarget))zone.classList.remove('is-target','is-return-target');
+  });
+  root.addEventListener('drop',event=>{
+    const id=dragId(event);if(!id)return;
+    const cell=event.target.closest('.slot'),tray=event.target.closest('[data-tray]');if(!cell&&!tray)return;
+    event.preventDefault();clearTargets();dragging=null;
+    if(cell)place(id,Number(cell.dataset.node),cell.dataset.category);
+    else if(tray.dataset.tray===catalog.get(id).category)remove(id);
+    else { Audio.error(); announce('Return this tile to its own category tray.',true); }
+  });
+  root.addEventListener('dragend',()=>{dragging=null;clearTargets();renderSelection();});
+  document.getElementById('cancel-selection').addEventListener('click',()=>{selected=null;Audio.click();renderSelection();announce('Selection cancelled.');});
+  document.getElementById('return-tile').addEventListener('click',()=>{if(selected)remove(selected);});
+  undoButton.addEventListener('click',()=>{
+    if(!history.length)return;
+    state.rows=history.pop();selected=null;Audio.click();redraw();persist();announce('Last placement undone.');undoButton.focus({preventScroll:true});
+  });
+  document.getElementById('reset-puzzle').addEventListener('click',()=>{selected=null;Audio.click();renderSelection();resetDialog.showModal();});
+  document.getElementById('cancel-reset').addEventListener('click',()=>resetDialog.close());
+  document.getElementById('confirm-reset').addEventListener('click',()=>{
+    state=newState();history.length=0;selected=null;dragging=null;
+    timerSeconds=0;timerActive=true;updateTimerDisplay();
+    redraw();renderAnswer();highlightNode(null);persist();resetDialog.close();
+    Audio.place();
+    announce('New attempt started. All '+TILE_COUNT+' tiles are available.');document.getElementById('reset-puzzle').focus({preventScroll:true});
+  });
+
+  /* === [ĐIỀU 5] ĐỒNG HỒ THI ĐUA TẠM DỪNG / TIẾP TỤC === */
+  const timerBadge = document.getElementById('timer-badge');
+  if (timerBadge) timerBadge.addEventListener('click', () => {
+    timerActive = !timerActive;
+    Audio.click();
+    announce(timerActive ? 'Đồng hồ tính giờ tiếp tục chạy.' : 'Đồng hồ tính giờ đã tạm dừng.');
+    timerBadge.style.opacity = timerActive ? '1' : '0.6';
+  });
+
+  /* === [ĐIỀU 1] BẬT / TẮT ÂM THANH === */
+  const soundToggle = document.getElementById('sound-toggle');
+  if (soundToggle) soundToggle.addEventListener('click', () => {
+    const unmuted = Audio.toggle();
+    document.getElementById('sound-icon').textContent = unmuted ? '🔊' : '🔇';
+    if (unmuted) Audio.click();
+  });
+
+  function updateInput() {
+    state.combination=input.value.replace(/\D/g,'').slice(0,4);input.value=state.combination;renderAnswer();persist();
+  }
+  input.addEventListener('input',updateInput);
+  input.addEventListener('paste',event=>{
+    event.preventDefault();input.value=(event.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,4);updateInput();
+  });
+
+  /* === [ĐIỀU 6] KIỂM TRA CODE Y VỚI MÃ HÓA SHA-256 (KHÔNG KHÓA LẦN NHẬP) === */
+  document.getElementById('combination-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    if(state.solved) return;
+
+    if(!ready()){
+      Audio.error();
+      answerMessage.className='answer-message is-error';
+      answerMessage.textContent='Enter all four digits before checking Code Y.';
+      input.focus();
+      return;
+    }
+
+    codeButton.disabled = true;
+    const computedHash = await computeCodeHash(state.combination);
+    if(computedHash === TARGET_HASH){
+      state.solved=true;
+      timerActive=false;
+      Audio.success();
+      launchConfetti();
+      renderAnswer();
+      persist();
+      
+    } else {
+      Audio.error();
+      answerMessage.className='answer-message is-error';
+      answerMessage.textContent='Not unlocked. Recheck the clues and clockwise reading order.';
+      input.setAttribute('aria-invalid','true');
+      input.focus();
+      input.select();
+      codeButton.disabled = false;
+    }
+  });
+
+    /* === SECURITY GATE CONTROLLER === */
+  const GATE_TARGET_HASH = '00e852969c19d71b2e1bc2bb44e97b224843c3145e86a725f70d5dbd6eba0a80';
+  const GATE_SALT = 'NOVA_GATE_2026_';
+  async function computeGateHash(code) {
+    const enc = new TextEncoder();
+    const data = enc.encode(GATE_SALT + String(code).trim());
+    const hashBuf = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function initSecurityGate() {
+    const gateOverlay = document.getElementById('security-gate');
+    const gateInput = document.getElementById('gate-input');
+    const gateSubmit = document.getElementById('gate-submit');
+    const gateError = document.getElementById('gate-error');
+    if (!gateOverlay || !gateInput) return;
+
+    // Check if already unlocked in this browser session
+    if (sessionStorage.getItem('nova_gate_unlocked') === 'true') {
+      gateOverlay.hidden = true;
+      return;
+    }
+
+    async function handleGateSubmit() {
+      const val = gateInput.value.trim();
+      if (!val) {
+        gateError.textContent = 'Please enter the passcode.';
+        gateInput.focus();
+        return;
+      }
+      gateSubmit.disabled = true;
+      const h = await computeGateHash(val);
+      if (h === GATE_TARGET_HASH) {
+        sessionStorage.setItem('nova_gate_unlocked', 'true');
+        Audio.success();
+        gateOverlay.style.transition = 'opacity 0.3s ease';
+        gateOverlay.style.opacity = '0';
+        setTimeout(() => {
+          gateOverlay.hidden = true;
+          // Start timer only when gate is unlocked
+          timerActive = true;
+          const comboInput = document.getElementById('combination');
+          if (comboInput) comboInput.focus();
+        }, 300);
+      } else {
+        Audio.error();
+        gateInput.classList.add('is-invalid');
+        gateError.textContent = 'Incorrect passcode. Access denied.';
+        gateInput.value = '';
+        gateInput.focus();
+        setTimeout(() => gateInput.classList.remove('is-invalid'), 500);
+        gateSubmit.disabled = false;
+      }
+    }
+
+    gateSubmit.addEventListener('click', handleGateSubmit);
+    gateInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleGateSubmit();
+      }
+    });
+
+    // Pause timer while locked behind gate
+    timerActive = false;
+  }
+  restore();redraw();renderAnswer();initTimer();
+  initSecurityGate();
+  if(!storageAvailable)document.getElementById('save-note').textContent='Progress is kept in this open page';
+  if(state.rows.some(row=>CATEGORIES.some(category=>row[category.id])))announce('Your saved records have been restored. Continue where you left off.');
+})();
+  </script>
+</body>
+</html>
